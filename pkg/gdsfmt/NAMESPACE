@@ -1,0 +1,9 @@
+# Load the shared object
+useDynLib(gdsfmt)
+
+# Export all names
+exportPattern(".")
+
+# Import
+import(methods)
+import(parallel)
