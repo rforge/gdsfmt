@@ -2918,7 +2918,7 @@ snpgdsOption <- function(gdsobj=NULL, autosome.start=1, autosome.end=22, ...)
 	# get the filename of the dynamic-link library
 	lib.fn <- as.character(getLoadedDLLs()$gdsfmt[[2]])
 	if (length(lib.fn) != 1)
-		stop("The package 'gdsfmt' was not installed correctly.")
+		stop("The package ''gdsfmt'' was not installed correctly.")
 
 	# init SNPRelate
 	rv <- .C("gnrInit", lib.fn, err=character(1), sse=integer(1),
