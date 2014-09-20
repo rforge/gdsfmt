@@ -45,11 +45,6 @@
 #endif
 #include <stdint.h>
 
-// to avoid conflict in Solaris x86 (Solaris Studio 12.3)
-#ifdef SS
-#   undef SS
-#endif
-
 #ifdef COREARRAY_POSIX
 #   // need 'ssize_t'
 #   include <unistd.h>

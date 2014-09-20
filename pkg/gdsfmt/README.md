@@ -1,7 +1,9 @@
 gdsfmt: R Interface to CoreArray Genomic Data Structure (GDS) files
 ===
 
-Version: 1.1.0
+Version: 1.1.1
+
+[![Build Status](https://travis-ci.org/zhengxwen/gdsfmt.png)](https://travis-ci.org/zhengxwen/gdsfmt)
 
 
 ## Features
@@ -18,7 +20,7 @@ Xiuwen Zheng ([zhengxwen@gmail.com](zhengxwen@gmail.com) / [zhengx@u.washington.
 
 ## Installation
 
-* From CRAN (stable release 1.0.+)
+* From CRAN (stable release 1.1.+)
 
 * Development version from Github:
 ```
@@ -30,4 +32,15 @@ The `install_github()` approach requires that you build from source, i.e. `make`
 * Nearly up-to-date development binaries from `gdsfmt` r-forge repository:
 ```
 install.packages("gdsfmt", repos="http://R-Forge.R-project.org")
+```
+
+* Install the package from the source code:
+[download the source code](https://codeload.github.com/zhengxwen/gdsfmt/tar.gz/v1.1.0)
+```
+wget https://codeload.github.com/zhengxwen/gdsfmt/tar.gz/v1.1.0 -O gdsfmt_1.1.0.tar.gz
+** Or **
+curl https://codeload.github.com/zhengxwen/gdsfmt/tar.gz/v1.1.0 -o gdsfmt_1.1.0.tar.gz
+
+** Install **
+R CMD INSTALL gdsfmt_1.1.0.tar.gz
 ```
