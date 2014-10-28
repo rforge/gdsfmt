@@ -29,7 +29,8 @@ objdesp.gdsn(node)
 		Unknown -- unknown type}
 	\item{is.array}{indicates whether it is array-type}
 	\item{dim}{the dimension of data field}
-	\item{compress}{the compression method: "", "ZIP", etc}
+	\item{encoder}{encoder for compressed data, such like "ZIP"}
+	\item{compress}{the compression method: "", "ZIP.max", etc}
 	\item{cpratio}{data compression ratio, \code{NaN} indicates no compression}
 	\item{size}{the size of data stored in the GDS file}
 	\item{good}{logical, indicates the state of GDS file, e.g.,
@@ -38,7 +39,7 @@ objdesp.gdsn(node)
 		messages, log information}
 }
 
-\references{\url{http://sourceforge.net/projects/corearray/}}
+\references{\url{http://github.com/zhengxwen/gdsfmt}}
 \author{Xiuwen Zheng}
 \seealso{
 	\code{\link{cnt.gdsn}}, \code{\link{name.gdsn}},
@@ -54,7 +55,7 @@ node1 <- add.gdsn(f, name="vector1", val=1:10000)
 objdesp.gdsn(node1)
 
 # add a vector to "test.gds"
-node2 <- add.gdsn(f, name="vector2", val=1:10000, compress="ZIP",
+node2 <- add.gdsn(f, name="vector2", val=1:10000, compress="ZIP.max",
 	closezip=FALSE)
 objdesp.gdsn(node2)
 

@@ -252,7 +252,7 @@ objdesp.gdsn <- function(node)
 
 	ans <- .Call(gdsNodeObjDesp, node)
 	names(ans) <- c("name", "fullname", "storage", "type", "is.array",
-		"dim", "compress", "cpratio", "size", "good", "message")
+		"dim", "encoder", "compress", "cpratio", "size", "good", "message")
 	attr(ans$type, "levels") <- c("Label", "Folder", "VFolder", "Raw",
 		"Integer", "Factor", "Logical", "Real", "String", "Unknown")
 	attr(ans$type, "class") <- "factor"
@@ -885,7 +885,19 @@ lasterr.gds <- function()
 	.Call(gdsLastErrGDS)
 }
 
-
+#############################################################
+# Return the parameters in the GDS system
+#
+system.gds <- function()
+{
+	rv <- .Call(gdsSystem)
+	s <- rv$compression.encoder
+	rv$compression.encoder <- data.frame(
+		encoder = rv$compression.encoder[seq(1, length(s), 2)],
+		description = rv$compression.encoder[seq(2, length(s), 2)],
+		stringsAsFactors = FALSE)
+	rv
+}
 
 
 
@@ -959,9 +971,9 @@ print.gdsn.class <- function(x, expand=TRUE, all=FALSE, ...)
 		}
 
 		# show compression
-		if (is.character(n$compress))
+		if (is.character(n$encoder))
 		{
-			if (n$compress != "") cat("", n$compress)
+			if (n$encoder != "") cat("", n$encoder)
 		}
 		if (is.numeric(n$cpratio))
 		{
@@ -1035,19 +1047,3 @@ gdsUnitTest <- function()
 	# return
 	invisible()
 }
-
-
-
-
-###############################################################################
-# initialize
-###############################################################################
-
-# .gds.machine <<- list()
-
-.onAttach <- function(lib, pkg)
-{
-#	.gds.machine <<- .Call(gdsInitVariable)
-	TRUE
-}
-
