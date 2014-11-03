@@ -34,6 +34,11 @@ Changes in v1.1.0:
 LGPL-3
 
 
+## Citation
+
+Xiuwen Zheng, David Levine, Jess Shen, Stephanie M. Gogarten, Cathy Laurie, Bruce S. Weir. A High-performance Computing Toolset for Relatedness and Principal Component Analysis of SNP Data. Bioinformatics 2012; [doi:10.1093/bioinformatics/bts606](http://dx.doi.org/10.1093/bioinformatics/bts606)
+
+
 ## Package Author & Maintainer
 
 Xiuwen Zheng ([zhengxwen@gmail.com](zhengxwen@gmail.com) / [zhengx@u.washington.edu](zhengx@u.washington.edu))
@@ -61,11 +66,11 @@ install.packages("gdsfmt", repos="http://R-Forge.R-project.org")
 ```
 
 * Install the package from the source code:
-[download the source code](https://codeload.github.com/zhengxwen/gdsfmt/tar.gz/v1.1.2)
+[download the source code](https://github.com/zhengxwen/gdsfmt/tarball/master)
 ```
-wget https://codeload.github.com/zhengxwen/gdsfmt/tar.gz/v1.1.2 -O gdsfmt_1.1.2.tar.gz
+wget --no-check-certificate https://github.com/zhengxwen/gdsfmt/tarball/master -O gdsfmt_1.1.2.tar.gz
 ** Or **
-curl https://codeload.github.com/zhengxwen/gdsfmt/tar.gz/v1.1.2 -o gdsfmt_1.1.2.tar.gz
+curl -L https://github.com/zhengxwen/gdsfmt/tarball/master/ -o gdsfmt_1.1.2.tar.gz
 
 ** Install **
 R CMD INSTALL gdsfmt_1.1.2.tar.gz
