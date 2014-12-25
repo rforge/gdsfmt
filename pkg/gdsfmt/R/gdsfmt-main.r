@@ -264,8 +264,8 @@ objdesp.gdsn <- function(node)
 # Add a GDS node
 #
 add.gdsn <- function(node, name, val=NULL, storage=storage.mode(val),
-	valdim=NULL, compress=c("", "ZIP", "ZIP_RA"), closezip=FALSE, check=TRUE,
-	replace=FALSE)
+	valdim=NULL, compress=c("", "ZIP", "ZIP_RA", "LZ4", "LZ4_RA"),
+	closezip=FALSE, check=TRUE, replace=FALSE, ...)
 {
 	if (inherits(node, "gds.class"))
 		node <- node$root
@@ -293,7 +293,7 @@ add.gdsn <- function(node, name, val=NULL, storage=storage.mode(val),
 	stopifnot(length(replace) == 1)
 
 	ans <- .Call(gdsAddNode, node, name, val, storage, valdim, compress,
-		closezip, check, replace)
+		closezip, check, replace, list(...))
 	class(ans) <- "gdsn.class"
 
 	if (storage == "list")
@@ -359,8 +359,8 @@ addfolder.gdsn <- function(node, name, type=c("directory", "virtual"),
 #############################################################
 # Add a GDS node with a file
 #
-addfile.gdsn <- function(node, name, filename, compress=c("ZIP", "ZIP_RA"),
-	replace=FALSE)
+addfile.gdsn <- function(node, name, filename,
+	compress=c("ZIP", "ZIP_RA", "LZ4", "LZ4_RA"), replace=FALSE)
 {
 	if (inherits(node, "gds.class"))
 		node <- node$root
@@ -470,7 +470,8 @@ delete.attr.gdsn <- function(node, name)
 #############################################################
 # Modify the data compression mode of data field
 #
-compression.gdsn <- function(node, compress=c("", "ZIP", "ZIP_RA"))
+compression.gdsn <- function(node,
+	compress=c("", "ZIP", "ZIP_RA", "LZ4", "LZ4_RA"))
 {
 	stopifnot(inherits(node, "gdsn.class"))
 	stopifnot(is.character(compress) & is.vector(compress))
@@ -522,7 +523,7 @@ append.gdsn <- function(node, val, check=TRUE)
 # Read data field of a GDS node
 #
 read.gdsn <- function(node, start=NULL, count=NULL,
-	simplify=c("auto", "none", "force"))
+	simplify=c("auto", "none", "force"), .useraw=FALSE)
 {
 	stopifnot(inherits(node, "gdsn.class"))
 	simplify <- match.arg(simplify)
@@ -561,14 +562,15 @@ read.gdsn <- function(node, start=NULL, count=NULL,
 		}
 	}
 
-	.Call(gdsObjReadData, node, start, count, simplify)
+	.Call(gdsObjReadData, node, start, count, simplify, .useraw)
 }
 
 
 #############################################################
 # Read data field of a GDS node
 #
-readex.gdsn <- function(node, sel=NULL, simplify=c("auto", "none", "force"))
+readex.gdsn <- function(node, sel=NULL, simplify=c("auto", "none", "force"),
+	.useraw=FALSE)
 {
 	stopifnot(inherits(node, "gdsn.class"))
 	simplify <- match.arg(simplify)
@@ -578,7 +580,7 @@ readex.gdsn <- function(node, sel=NULL, simplify=c("auto", "none", "force"))
 		stopifnot(is.logical(sel) | is.list(sel))
 		if (is.logical(sel)) sel <- list(d1=sel)
 		# read
-		.Call(gdsObjReadExData, node, sel, simplify)
+		.Call(gdsObjReadExData, node, sel, simplify, .useraw)
 	} else {
 		# output
 		read.gdsn(node)
@@ -590,8 +592,9 @@ readex.gdsn <- function(node, sel=NULL, simplify=c("auto", "none", "force"))
 # Apply functions over array margins of a GDS node
 #
 apply.gdsn <- function(node, margin, FUN, selection=NULL,
-	as.is = c("list", "integer", "double", "character", "none"),
-	var.index = c("none", "relative", "absolute"), ...)
+	as.is=c("list", "integer", "double", "character", "none", "gdsnode"),
+	var.index=c("none", "relative", "absolute"), target.node=NULL,
+	.useraw=FALSE, ...)
 {
 	# check
 	if (inherits(node, "gdsn.class"))
@@ -625,11 +628,28 @@ apply.gdsn <- function(node, margin, FUN, selection=NULL,
 	var.index <- match.arg(var.index)
 	var.index <- match(var.index, c("none", "relative", "absolute"))
 
+	if (as.is == "gdsnode")
+	{
+		if (inherits(target.node, "gdsn.class"))
+			target.node <- list(target.node)
+		if (is.list(target.node))
+		{
+			for (i in seq_len(length(target.node)))
+				stopifnot(inherits(target.node[[i]], "gdsn.class"))
+		} else {
+			stop(
+			"'target.node' should be 'gdsn.class' or a list of 'gdsn.class'.")
+		}
+	} else {
+		if (!is.null(target.node))
+			stop("'target.node' should be NULL.")
+	}
+
 	# call C function -- set starting index
 	.Call(gdsApplySetStart, 1L)
 	# call C function -- apply calling
 	ans <- .Call(gdsApplyCall, node, as.integer(margin), FUN,
-		selection, as.is, var.index, new.env())
+		selection, as.is, var.index, .useraw, target.node, new.env())
 
 	if (is.null(ans))
 		invisible()
@@ -644,7 +664,7 @@ apply.gdsn <- function(node, margin, FUN, selection=NULL,
 clusterApply.gdsn <- function(cl, gds.fn, node.name, margin,
 	FUN, selection=NULL,
 	as.is = c("list", "integer", "double", "character", "none"),
-	var.index = c("none", "relative", "absolute"), ...)
+	var.index = c("none", "relative", "absolute"), .useraw=FALSE, ...)
 {
 	#########################################################
 	# library
@@ -767,7 +787,7 @@ clusterApply.gdsn <- function(cl, gds.fn, node.name, margin,
 				# call C function -- apply calling
 				.Call(gdsApplyCall, nd_nodes, margin, FUN, item$sel, as.is,
 					match(var.index, c("none", "relative", "absolute")),
-					new.env())
+					.useraw, NULL, new.env())
 
 			}, gds.fn=gds.fn, node.name=node.name, margin=margin,
 				FUN=FUN, as.is=as.is, var.index=var.index, ...
@@ -778,8 +798,10 @@ clusterApply.gdsn <- function(cl, gds.fn, node.name, margin,
 		else 
 			invisible()
 
-	} else
-		apply.gdsn(nd_nodes, margin, FUN, selection, as.is, var.index, ...)
+	} else {
+		apply.gdsn(nd_nodes, margin, FUN, selection, as.is,
+			var.index, .useraw, ...)
+	}
 }
 
 
@@ -894,6 +916,10 @@ system.gds <- function()
 		encoder = rv$compression.encoder[seq(1, length(s), 2)],
 		description = rv$compression.encoder[seq(2, length(s), 2)],
 		stringsAsFactors = FALSE)
+	rv$class.list <- data.frame(rv$class.list, stringsAsFactors=FALSE)
+	colnames(rv$class.list) <- c("name", "description")
+	rv$class.list <- rv$class.list[order(rv$class.list$description), ]
+	rownames(rv$class.list) <- NULL
 	rv
 }
 

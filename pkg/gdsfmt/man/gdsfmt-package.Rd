@@ -19,7 +19,7 @@ supported by the parallel package.
 \tabular{ll}{
 	Package: \tab gdsfmt\cr
 	Type: \tab Package\cr
-	Version: \tab 1.1.2\cr
+	Version: \tab 1.1.3\cr
 	License: \tab LGPL version 3\cr
 }
 	R interface of CoreArray GDS is based on the CoreArray project initiated
@@ -36,15 +36,20 @@ in parallel, and allows future R packages to call these functions.
 
 	Webpage: \url{http://corearray.sourceforge.net},
 		\url{http://github.com/zhengxwen/gdsfmt}
+
+Copyright notice:
+	The package includes the source code of CoreArray C++ library
+	written by Xiuwen Zheng (LGPL-3), zlib written by Jean-loup Gailly and
+	Mark Adler (zlib license), and LZ4 written by Yann Collet (simplified BSD).
 }
 \references{
 	\url{http://corearray.sourceforge.net},
 	\url{http://github.com/zhengxwen/gdsfmt}
 
-	Xiuwen Zheng, David Levine, Jess Shen, Stephanie M. Gogarten,
-Cathy Laurie, Bruce S. Weir. A High-performance Computing Toolset for
-Relatedness and Principal Component Analysis of SNP Data.
-Bioinformatics 2012; doi: 10.1093/bioinformatics/bts606
+	Xiuwen Zheng, David Levine, Jess Shen, Stephanie M. Gogarten, Cathy Laurie,
+Bruce S. Weir. A High-performance Computing Toolset for Relatedness and
+Principal Component Analysis of SNP Data. Bioinformatics 2012;
+doi: 10.1093/bioinformatics/bts606.
 }
 \author{Xiuwen Zheng \email{zhengx@u.washington.edu}}
 

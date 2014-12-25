@@ -6,7 +6,8 @@
 }
 
 \usage{
-addfile.gdsn(node, name, filename, compress=c("ZIP", "ZIP_RA"), replace=FALSE)
+addfile.gdsn(node, name, filename,
+	compress=c("ZIP", "ZIP_RA", "LZ4", "LZ4_RA"), replace=FALSE)
 }
 
 \arguments{
@@ -19,16 +20,20 @@ addfile.gdsn(node, name, filename, compress=c("ZIP", "ZIP_RA"), replace=FALSE)
 	\item{compress}{the compression method can be "" (no compression),
 		"ZIP", "ZIP.fast", "ZIP.default", "ZIP.max" or "ZIP.none" (original
 		zlib); "ZIP_RA", "ZIP_RA.fast", "ZIP_RA.default", "ZIP_RA.max" or
-		"ZIP_RA.none" (zlib with efficient random access), see details}
+		"ZIP_RA.none" (zlib with efficient random access); "LZ4", "LZ4.none",
+		"LZ4.fast", "LZ4.hc" or "LZ4.max"; "LZ4_RA", "LZ4_RA.none",
+		"LZ4_RA.fast", "LZ4_RA.hc" or "LZ4_RA.max" (with efficient random
+		access). See details}
 	\item{replace}{if \code{TRUE}, replace the existing variable silently
 		if possible}
 }
 
 \details{
 	\code{compress}:
-		Z compression algorithm can be used to deflate the data stored in the
-		GDS file. "ZIP" option is equivalent to "ZIP.default". "ZIP.fast",
-		"ZIP.default" and "ZIP.max" correspond to different compression levels.
+		Z compression algorithm (\url{http://www.zlib.net/}) can be used to
+		deflate the data stored in the GDS file. "ZIP" option is equivalent
+		to "ZIP.default". "ZIP.fast", "ZIP.default" and "ZIP.max" correspond
+		to different compression levels.
 
 		To support efficient random access of Z stream, "ZIP_RA",
 		"ZIP_RA.fast", "ZIP_RA.default", "ZIP_RA.max" or "ZIP_RA.none" should
@@ -39,8 +44,22 @@ addfile.gdsn(node, name, filename, compress=c("ZIP", "ZIP_RA"), replace=FALSE)
 		independent compressed data block to be about of the specified block
 		size, such like 64K.
 
-		To finish compressing, you should call \code{\link{readmode.gdsn}} to
-		close the writing mode.
+		LZ4 fast lossless compression algorithm is allowed with
+		\code{compress="LZ4"} (\url{http://code.google.com/p/lz4/}). Three
+		compression levels can be specified, "LZ4.fast" (LZ4 fast mode),
+		"LZ4.hc" (LZ4 high compression mode), "LZ4.max" (maximize the
+		compression ratio). The block size can be specified by following colon,
+		and "64K", "256K", "1M" and "4M" are allowed according to LZ4 frame
+		format. "LZ4" is equivalent to "LZ4.hc:256K".
+
+		To support efficient random access of LZ4 stream, "LZ4_RA",
+		"LZ4_RA.fast", "LZ4_RA.hc", "ZIP_RA.max" or "LZ4_RA.none" should
+		be specified. "LZ4_RA" option is equivalent to "LZ4_RA.hc:256K".
+		The block size can be specified by following colon, and "16K", "32K",
+		"64K", "128K", "256K", "512K" and "1M" are allowed, such like
+		"ZIP_RA:16K". The compression algorithm tries to keep each
+		independent compressed data block to be about of the specified block
+		size, such like 64K.
 }
 
 \value{
@@ -48,8 +67,7 @@ addfile.gdsn(node, name, filename, compress=c("ZIP", "ZIP_RA"), replace=FALSE)
 }
 
 \references{
-	\url{http://github.com/zhengxwen/gdsfmt},
-	\url{http://www.zlib.net/}
+	\url{http://github.com/zhengxwen/gdsfmt}
 }
 \author{Xiuwen Zheng}
 \seealso{
